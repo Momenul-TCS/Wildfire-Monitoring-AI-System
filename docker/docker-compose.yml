@@ -1,0 +1,36 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - VLLM_BASE_URL=http://ollama:11434/v1
+      - LLM_MODEL_NAME=qwen2.5:7b
+      - VLLM_API_KEY=ollama
+      - OPENAI_API_KEY=ollama
+      - OLLAMA_HOST=http://ollama:11434
+      - DATASET_DIR=/app/datasets
+      - MODEL_DIR=/app/models/saved
+    depends_on:
+      ollama:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
