@@ -1,0 +1,67 @@
+# Agent Configuration
+# Thresholds and parameters for all agents
+
+weather_agent:
+  name: "Weather Intelligence Agent"
+  description: "Monitors weather and predicts wildfire risk"
+  update_interval_seconds: 30
+  risk_thresholds:
+    low: 0.25
+    medium: 0.50
+    high: 0.75
+    critical: 0.90
+  weather_features:
+    - temperature
+    - humidity
+    - wind_speed
+    - wind_direction
+    - rainfall
+    - pressure
+    - drought_index
+
+alert_agent:
+  name: "Alert Generation Agent"
+  description: "Generates emergency alerts based on risk scores"
+  alert_levels:
+    low:
+      message: "Low wildfire risk. Monitor conditions."
+      color: "green"
+      action: "No action required."
+    medium:
+      message: "Moderate wildfire risk detected."
+      color: "yellow"
+      action: "Authorities should remain on standby."
+    high:
+      message: "High wildfire risk detected in zone."
+      color: "orange"
+      action: "Prepare evacuation plans immediately."
+    critical:
+      message: "CRITICAL wildfire risk. Immediate action required."
+      color: "red"
+      action: "Evacuate affected zones immediately."
+
+infra_agent:
+  name: "Infrastructure & Demographics Agent"
+  description: "Assesses nearby infrastructure and population risk"
+  search_radii_km:
+    immediate: 1.0
+    nearby: 5.0
+    extended: 10.0
+  asset_types:
+    - house
+    - hospital
+    - school
+    - transformer
+    - power_line
+    - shelter
+    - emergency_center
+
+orchestrator:
+  name: "Orchestrator Agent"
+  description: "Manages all agents and aggregates outputs"
+  max_retries: 3
+  timeout_seconds: 60
+  agent_sequence:
+    - weather_agent
+    - alert_agent
+    - infra_agent
